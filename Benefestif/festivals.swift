@@ -15,18 +15,41 @@ struct Festival: Identifiable {
     var url = URL(string: "")
     var totalUsers: Int
 }
+class User: ObservableObject {
+    @Published var informationsUser: [InformationUser]
+    
+    init(informationsUser: [InformationUser] = []) {
+        self.informationsUser = informationsUser
+    }
+}
+
+class InformationUser: Identifiable, ObservableObject {
+    var id = UUID()
+    @Published var firstName : String
+    @Published var lastName : String
+    @Published var numberUser : Int
+    init(firstName: String, lastName: String, numberUser: Int) {
+        self.firstName = firstName
+        self.numberUser = numberUser
+        self.lastName = lastName
+    }
+}
 
 struct FestivalListView: View {
+    
     let festivals: [Festival] = [
         Festival(name: "Lolapalooza", date: Date(), url: URL(string :"https://www.ticketmaster.fr/statics/artiste/1363_img.jpg"), totalUsers: 100),
         Festival(name: "Festival du Film", date: Date(), url: URL(string :"https://fr.web.img5.acsta.net/r_1280_720/img/23/96/2396d7fe46b479084191f98f33ef1751.jpg"), totalUsers: 10),
-        Festival(name: "Rock en scène", date: Date(), url: URL(string :"https://www.nova.fr/wp-content/uploads/sites/2/2023/08/Rock-en-Seine-2023.jpg"), totalUsers: 70)
+        Festival(name: "Rock en Seine", date: Date(), url: URL(string :"https://www.nova.fr/wp-content/uploads/sites/2/2023/08/Rock-en-Seine-2023.jpg"), totalUsers: 70)
     ]
+    @StateObject var user = User()
 
     var body: some View {
         NavigationView {
             List(festivals) { festival in
-                NavigationLink(destination: FestivalDetailView(festival: festival)) {
+                NavigationLink {
+                    FestivalDetailView(festival: festival, user: user)
+                } label: {
                     Text(festival.name)
                 }
             }
@@ -37,33 +60,34 @@ struct FestivalListView: View {
 
 struct FestivalDetailView: View {
     var festival: Festival
-    @State private var numberUser = 0
-    @State private var selectedLastName = ""
-    @State private var selectedFirstName = ""
-
+    @ObservedObject var user: User
+    @State var numberUser = 0
+    @State var selectedFirstName = ""
+    @State var selectedLastName = ""
+    @State private var redirectToHome = false
+    
     var body: some View {
         VStack {
             Form {
                 Section(header: Text(festival.name)
-                            .fontWeight(.bold)
-                            .foregroundColor(Color(red: 0, green: 0, blue: 0.5))
-                            .font(.system(size: 24))
+                    .fontWeight(.bold)
+                    .foregroundColor(Color(red: 0, green: 0, blue: 0.5))
+                    .font(.system(size: 24))
                 ) {
-                    AsyncImage(url: festival.url) { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .imageScale(.large)
-                            .cornerRadius(10)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .stroke(lineWidth: 4)
-                            )
+                AsyncImage(url: festival.url) { image in
+                    image
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .imageScale(.large)
+                    .cornerRadius(10)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(lineWidth: 4)
+                    )
                     } placeholder: {
                         Rectangle()
                             .foregroundColor(.gray)
                     }
-                    
                     Text("Date: \(formattedDate(festival.date))")
                 }
 
@@ -86,19 +110,13 @@ struct FestivalDetailView: View {
                     TextField("Nom", text: $selectedLastName)
                     TextField("Prénom", text: $selectedFirstName)
                 }
-                Button(action: {
-                    print("Button pressed")
-                }) {
-                    Text("Let's go !")
-                        .padding(10)
-                        .background(Color(red: 0, green: 0, blue: 0.5))
-                        .foregroundColor(.white)
-                        .clipShape(Capsule())
-                }
-                .contentShape(Rectangle())
-                
+               
             }
             .foregroundColor(.gray)
+            Button("S'inscrire") {
+                var newfestivalItems = InformationUser(firstName: selectedFirstName, lastName: selectedLastName, numberUser: numberUser)
+//                InformationUser.append(newfestivalItems)
+            }
         }
     }
     

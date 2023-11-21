@@ -8,14 +8,20 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State var participantItems : [InformationUser] = []
     
     var body: some View {
-        
-        VStack {
+        TabView {
             FestivalListView()
+                .tabItem{
+                    Label("Home", systemImage: "house.fill")
+                }
+            MybenefestifView(users: $participantItems)
+                .tabItem{
+                    Label("My benefestif", systemImage: "heart.circle")
+                }
+            }
         }
-        .navigationTitle("Accueil")
-    }
 }
 
 struct ContentView_Previews: PreviewProvider {
