@@ -8,20 +8,20 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State var participantItems : [InformationUser] = []
+    @StateObject var participantItems = User(informationsUser: arrayUser)
     
     var body: some View {
-        TabView {
-            FestivalListView()
-                .tabItem{
-                    Label("Home", systemImage: "house.fill")
-                }
-            MybenefestifView(users: $participantItems)
-                .tabItem{
-                    Label("My benefestif", systemImage: "heart.circle")
-                }
+    TabView {
+        FestivalListView(user: participantItems)
+            .tabItem{
+                Label("Home", systemImage: "house.fill")
+            }
+        MybenefestifView(users: participantItems)
+            .tabItem {
+                Label("My benefestif", systemImage: "heart.circle")
             }
         }
+    }
 }
 
 struct ContentView_Previews: PreviewProvider {
