@@ -21,8 +21,9 @@ struct FestivalListView: View {
 struct FestivalDetailView: View {
     var festival: Festival
     @ObservedObject var user: User
-    @StateObject var newUser =  InformationUser(firstName: "", lastName: "", numberUser: 0)
+    @StateObject var newUser =  InformationUser(firstName: "", lastName: "", numberUser: 0, festival:"")
     @State var isShowingRegistrationList = false
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         VStack {
@@ -73,10 +74,12 @@ struct FestivalDetailView: View {
             .foregroundColor(.gray)
            
             Button("S'inscrire") {
+                newUser.festival = festival.name
                 user.informationsUser.append(newUser)
+                presentationMode.wrappedValue.dismiss()
             }
             .sheet(isPresented: $isShowingRegistrationList) {
-                MybenefestifView(users: user)
+                MybenefestifView(user: user)
             }
         }
     }

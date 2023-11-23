@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  Benefestif
-//
-//  Created by M'ZALI Mylene on 20/11/2023.
-//
-
 import SwiftUI
 
 struct ContentView: View {
@@ -16,9 +9,13 @@ struct ContentView: View {
             .tabItem{
                 Label("Home", systemImage: "house.fill")
             }
-        MybenefestifView(users: participantItems)
+        MybenefestifView(user: participantItems)
             .tabItem {
                 Label("My benefestif", systemImage: "heart.circle")
+            }
+        SuggestionView()
+            .tabItem {
+                Label("Prochainement", systemImage: "music.mic.circle")
             }
         }
     }
